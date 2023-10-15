@@ -1,2 +1,5 @@
-# DL_time_series
-Time series modeling using deep learning
+# Deep Learning for Time series analysis
+
+In this notebook I use time series modeling using deep learning.
+
+
