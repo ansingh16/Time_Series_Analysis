@@ -13,5 +13,9 @@ It contains following files with different techniques:
 
 - Volatility_analysis.ipynb:
 
-   - GARCH(1,1) Model
+   - GARCH Model
+   - Handling information assymmetry
+   - Forcasting using fixed window and rolling window approach
+   - Forecasting using bootstrap and simulation
+   - Model Evaluation
 
