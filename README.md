@@ -17,5 +17,6 @@ It contains following files with different techniques:
    - Handling information assymmetry
    - Forcasting using fixed window and rolling window approach
    - Forecasting using bootstrap and simulation
+   - CCC-GARCH model for portfolio forecasting
    - Model Evaluation
 
