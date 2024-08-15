@@ -7,9 +7,8 @@ It contains following files with different techniques:
 
 - Time_series_analysis.ipynb:
 
-   - Moving Average (MA)
-    - Autoregressive (AR)
     - Autoregressive Integrated Moving Average Model (ARIMA)
+    - Prophet
 
 - Volatility_analysis.ipynb:
 
