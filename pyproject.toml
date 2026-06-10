@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "timeseries-analysis"
+version = "0.1.0"
+description = "Time-series forecasting (ARIMA/SARIMA, exponential smoothing, Prophet) and volatility modelling (GARCH family) on financial and macroeconomic data"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Ankit Singh" }]
+dependencies = [
+    "numpy",
+    "pandas",
+    "scipy",
+    "matplotlib",
+    "pyarrow",
+    "yfinance",
+    "nasdaqdatalink",
+    "statsmodels",
+    "pmdarima",
+    "arch",
+    "scikit-learn",
+]
+
+[project.optional-dependencies]
+# Heavier / optional model backends, imported lazily where used.
+extras = ["prophet", "sktime"]
+dev = ["pytest", "ruff"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
