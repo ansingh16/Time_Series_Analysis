@@ -1,1 +1,29 @@
+# Secrets / config (holds API keys — never commit)
 config.py
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Virtual envs
+.venv/
+venv/
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Cached market/macro data & model artifacts
+data/
+*.pkl
+*.joblib
+
+# Generated outputs
+results/
+
+# Tooling
+.pytest_cache/
+.ruff_cache/
