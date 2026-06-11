@@ -5,6 +5,12 @@ be imported, tested, and reused across the three workflows: stock-price
 forecasting, unemployment-rate forecasting, and volatility modelling.
 """
 
+from .backtest import (
+    metrics_by_horizon,
+    plot_degradation,
+    walk_forward_arima,
+    walk_forward_garch,
+)
 from .data import (
     adf_test,
     compute_returns,
@@ -62,4 +68,8 @@ __all__ = [
     "ccc_garch",
     "forecast_metrics",
     "variance_error",
+    "walk_forward_arima",
+    "walk_forward_garch",
+    "metrics_by_horizon",
+    "plot_degradation",
 ]
