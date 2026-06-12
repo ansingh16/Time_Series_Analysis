@@ -90,9 +90,15 @@ def fetch_fred(
 
 
 def prepare_prices(close: pd.Series, freq: str = "D") -> pd.Series:
-    """Reindex a price series to a regular frequency and forward-fill gaps."""
+    """Reindex a price series to a regular frequency and forward-fill gaps.
+
+    The index is parsed with ``pd.to_datetime`` (handles string dates and mixed
+    formats), then sorted and de-duplicated so ``asfreq`` can't trip over an
+    out-of-order or repeated timestamp, which some Yahoo Finance pulls contain.
+    """
     close = close.copy()
-    close.index = pd.DatetimeIndex(close.index)
+    close.index = pd.to_datetime(close.index)
+    close = close[~close.index.duplicated(keep="last")].sort_index()
     close = close.asfreq(freq)
     if close.isna().any():
         close = close.ffill()
