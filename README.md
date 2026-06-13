@@ -72,15 +72,39 @@ It holds out the final 10% of the GOOGL 2017–2019 series and produces:
 Outputs are written to `results/`: `comparison_level.csv`,
 `comparison_volatility.csv`, `forecast_comparison.png`, `volatility_models.png`.
 
+**Level forecast** — last 10% (108 days) of GOOGL held out:
+
+| Model | MAE | RMSE | MAPE | Directional acc. |
+|:--|:--:|:--:|:--:|:--:|
+| Naive (last value) | 2.78 | 3.43 | 4.27% | 0.31 |
+| ARIMA(0, 1, 0) | 2.78 | 3.43 | 4.27% | 0.31 |
+| Prophet | **0.88** | **1.08** | **1.40%** | 0.32 |
+
+![GOOGL price forecast comparison](results/forecast_comparison.png)
+
+**Volatility** — GARCH family on the returns (lower variance error / AIC / BIC is better):
+
+| Model | Variance MAE | Variance MSE | AIC | BIC |
+|:--|:--:|:--:|:--:|:--:|
+| GARCH(1,1) | 1.915 | 22.17 | 3411.2 | 3431.2 |
+| GJR-GARCH | **1.895** | 22.01 | **3390.0** | **3414.9** |
+| EGARCH | 1.896 | **21.98** | 3395.6 | 3420.6 |
+
+![Conditional volatility by model](results/volatility_models.png)
+
 ### Key findings
 
-The clearest result comes from the walk-forward validation in notebook 04, run on
-GOOGL 2017–2019 (22 forecast origins, expanding window, 5-day horizon).
-
-- **The price is a random walk — the model says so itself.** `auto_arima` selected
-  **ARIMA(0, 1, 0)** on the price: a pure random walk whose best estimate of every
-  future day is the last observed price. Walk-forward error grows steadily with the
-  horizon and directional accuracy decays to nothing:
+- **A random-walk ARIMA *is* the naive baseline.** `auto_arima` selected
+  ARIMA(0, 1, 0) on the price, and its forecast is identical to the naive
+  last-value baseline to four decimals — the model itself concludes that the best
+  estimate of every future day is the last observed price.
+- **Prophet wins on level error but not on direction.** Prophet's trend component
+  cuts RMSE from 3.43 to 1.08 over the long hold-out, yet its directional accuracy
+  (0.32) is no better than the random walk's. Fitting the trend is not the same as
+  predicting which way the price moves next.
+- **The directional edge decays fast.** Walk-forward validation (notebook 04, 22
+  expanding-window origins) shows the price-forecast error growing with the horizon
+  while directional accuracy falls to zero past two days:
 
   | Horizon (days) | RMSE | MAPE | Directional accuracy |
   |:--:|:--:|:--:|:--:|
@@ -90,16 +114,12 @@ GOOGL 2017–2019 (22 forecast origins, expanding window, 5-day horizon).
   | 4 | 1.47 | 1.73% | 0.00 |
   | 5 | 1.49 | 1.83% | 0.00 |
 
-  A multi-day price forecast carries essentially no directional edge — the
-  validation makes that honest rather than hiding it behind one flattering split.
-
-- **Volatility is where the structure is.** Returns are near-unforecastable in the
-  mean, but their variance is persistent, so the GARCH(1,1) volatility forecast MAE
-  *stays flat* across the horizon (≈0.014 at one day, ≈0.007 by five) instead of
-  compounding like the price error. The asymmetric models (GJR-GARCH, EGARCH) add a
-  leverage term for the "bad news raises volatility more than good news" effect;
-  whether that extra parameter pays off is decided on AIC / BIC and variance error
-  (see `scripts/run_comparison.py`), not on in-sample fit alone.
+- **Asymmetry pays off in volatility.** GJR-GARCH has the lowest AIC, BIC, and
+  variance MAE, and EGARCH the lowest variance MSE; plain GARCH(1,1) is worst on
+  every criterion. The leverage term — "bad news raises volatility more than good
+  news" — earns its extra parameter here. And because variance is persistent, the
+  volatility forecast stays stable across the horizon instead of compounding the
+  way the price error does.
 
 ## Install
 
