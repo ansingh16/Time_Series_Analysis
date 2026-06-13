@@ -74,18 +74,32 @@ Outputs are written to `results/`: `comparison_level.csv`,
 
 ### Key findings
 
-- **Price level is close to a random walk.** ARIMA edges the naive last-value
-  baseline only slightly, and walk-forward validation (notebook 04) shows the
-  point-forecast error growing steadily with the horizon while directional accuracy
-  sits near the 0.5 coin-flip line. A multi-day price forecast carries little
-  directional edge — and the comparison makes that honest rather than hiding it
-  behind a single flattering split.
+The clearest result comes from the walk-forward validation in notebook 04, run on
+GOOGL 2017–2019 (22 forecast origins, expanding window, 5-day horizon).
+
+- **The price is a random walk — the model says so itself.** `auto_arima` selected
+  **ARIMA(0, 1, 0)** on the price: a pure random walk whose best estimate of every
+  future day is the last observed price. Walk-forward error grows steadily with the
+  horizon and directional accuracy decays to nothing:
+
+  | Horizon (days) | RMSE | MAPE | Directional accuracy |
+  |:--:|:--:|:--:|:--:|
+  | 1 | 0.61 | 0.68% | 0.32 |
+  | 2 | 1.37 | 1.27% | 0.18 |
+  | 3 | 1.42 | 1.59% | 0.00 |
+  | 4 | 1.47 | 1.73% | 0.00 |
+  | 5 | 1.49 | 1.83% | 0.00 |
+
+  A multi-day price forecast carries essentially no directional edge — the
+  validation makes that honest rather than hiding it behind one flattering split.
+
 - **Volatility is where the structure is.** Returns are near-unforecastable in the
-  mean, but their variance is persistent, so the GARCH-family volatility forecast
-  stays comparatively stable across the horizon. The asymmetric models (GJR-GARCH,
-  EGARCH) add a leverage term for the well-known "bad news raises volatility more
-  than good news" effect; whether that extra parameter pays off is decided on
-  AIC / BIC and variance error, not on in-sample fit alone.
+  mean, but their variance is persistent, so the GARCH(1,1) volatility forecast MAE
+  *stays flat* across the horizon (≈0.014 at one day, ≈0.007 by five) instead of
+  compounding like the price error. The asymmetric models (GJR-GARCH, EGARCH) add a
+  leverage term for the "bad news raises volatility more than good news" effect;
+  whether that extra parameter pays off is decided on AIC / BIC and variance error
+  (see `scripts/run_comparison.py`), not on in-sample fit alone.
 
 ## Install
 
