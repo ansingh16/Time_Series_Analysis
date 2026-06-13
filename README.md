@@ -94,32 +94,33 @@ Outputs are written to `results/`: `comparison_level.csv`,
 
 ### Key findings
 
-- **A random-walk ARIMA *is* the naive baseline.** `auto_arima` selected
-  ARIMA(0, 1, 0) on the price, and its forecast is identical to the naive
-  last-value baseline to four decimals — the model itself concludes that the best
-  estimate of every future day is the last observed price.
-- **Prophet wins on level error but not on direction.** Prophet's trend component
-  cuts RMSE from 3.43 to 1.08 over the long hold-out, yet its directional accuracy
-  (0.32) is no better than the random walk's. Fitting the trend is not the same as
-  predicting which way the price moves next.
-- **The directional edge decays fast.** Walk-forward validation (notebook 04, 22
-  expanding-window origins) shows the price-forecast error growing with the horizon
-  while directional accuracy falls to zero past two days:
+`auto_arima` picked ARIMA(0, 1, 0) on the price, which is just a random walk: its
+forecast matches the naive last-value baseline to four decimal places. The model
+is effectively saying the best guess for every future day is the last observed
+price.
 
-  | Horizon (days) | RMSE | MAPE | Directional accuracy |
-  |:--:|:--:|:--:|:--:|
-  | 1 | 0.61 | 0.68% | 0.32 |
-  | 2 | 1.37 | 1.27% | 0.18 |
-  | 3 | 1.42 | 1.59% | 0.00 |
-  | 4 | 1.47 | 1.73% | 0.00 |
-  | 5 | 1.49 | 1.83% | 0.00 |
+Prophet does better on level error, cutting RMSE from 3.43 to 1.08 over the
+hold-out, but its directional accuracy (0.32) is no better than the random walk's.
+Fitting the trend is not the same as calling which way the price moves next.
 
-- **Asymmetry pays off in volatility.** GJR-GARCH has the lowest AIC, BIC, and
-  variance MAE, and EGARCH the lowest variance MSE; plain GARCH(1,1) is worst on
-  every criterion. The leverage term — "bad news raises volatility more than good
-  news" — earns its extra parameter here. And because variance is persistent, the
-  volatility forecast stays stable across the horizon instead of compounding the
-  way the price error does.
+That directional edge also fades fast. The walk-forward validation in notebook 04
+(22 expanding-window origins) shows forecast error growing with the horizon while
+directional accuracy drops to zero after two days:
+
+| Horizon (days) | RMSE | MAPE | Directional accuracy |
+|:--:|:--:|:--:|:--:|
+| 1 | 0.61 | 0.68% | 0.32 |
+| 2 | 1.37 | 1.27% | 0.18 |
+| 3 | 1.42 | 1.59% | 0.00 |
+| 4 | 1.47 | 1.73% | 0.00 |
+| 5 | 1.49 | 1.83% | 0.00 |
+
+The volatility side is more productive. GJR-GARCH has the lowest AIC, BIC, and
+variance MAE, and EGARCH the lowest variance MSE; plain GARCH(1,1) is worst on all
+three. The asymmetric leverage term (bad news raises volatility more than good
+news) earns its extra parameter. And because variance is persistent, the
+volatility forecast stays stable across the horizon rather than compounding the
+way the price error does.
 
 ## Install
 
